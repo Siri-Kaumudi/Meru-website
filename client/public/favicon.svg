@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#1e40af"/>
+  <!-- Sewing machine simplified icon -->
+  <rect x="12" y="22" width="32" height="20" rx="4" fill="white" opacity="0.9"/>
+  <rect x="10" y="38" width="44" height="6" rx="3" fill="white" opacity="0.7"/>
+  <!-- Needle -->
+  <rect x="30" y="34" width="2" height="14" rx="1" fill="#1e40af"/>
+  <!-- Bobbin wheel -->
+  <circle cx="50" cy="28" r="8" fill="none" stroke="white" stroke-width="2" opacity="0.9"/>
+  <circle cx="50" cy="28" r="3" fill="white" opacity="0.9"/>
+  <!-- Thread spool top -->
+  <rect x="14" y="16" width="8" height="12" rx="2" fill="#f59e0b"/>
+</svg>
