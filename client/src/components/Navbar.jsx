@@ -18,10 +18,10 @@ export default function Navbar() {
   const [atTop, setAtTop] = useState(true);
 
   useEffect(() => {
-    const onScroll = () => setAtTop(window.scrollY === 0);
+    const onScroll = () => setAtTop(window.scrollY < 10);
     window.addEventListener('scroll', onScroll, { passive: true });
     // Re-check immediately whenever pathname changes (page navigation resets scroll)
-    setAtTop(window.scrollY === 0);
+    setAtTop(window.scrollY < 10);
     return () => window.removeEventListener('scroll', onScroll);
   }, [pathname]);
 
@@ -95,8 +95,10 @@ export default function Navbar() {
     {pathname === '/' && (
       <div style={{
         maxHeight : atTop ? '50px' : '0px',
+        opacity   : atTop ? 1 : 0,
         overflow  : 'hidden',
-        transition: 'max-height 0.3s ease-out',
+        transition: 'max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease',
+        willChange: 'max-height, opacity',
       }}>
         <TailorTape />
       </div>

@@ -115,7 +115,7 @@ export default function Home() {
           {/* ── CENTER: Main hero content ── */}
           <div className="flex-1 text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-full px-4 py-2 text-sm mb-6">
+            <div className="inline-flex items-center gap-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-full px-4 py-2 text-sm mb-6 mt-2 lg:-mt-10">
               <SewingMachineIcon className="w-5 h-5" />
               <span className="text-primary-200">తెలంగాణ రాష్ట్రం · Telangana State</span>
             </div>
@@ -152,6 +152,37 @@ export default function Home() {
               <span>ఇప్పుడే నమోదు చేయండి</span>
             </Link>
             <p className="text-primary-400 text-sm mt-3">Register Your Family Now — Free &amp; Easy</p>
+
+            {/* ── Mobile leaders — visible only below lg ── */}
+            <div className="lg:hidden mt-8 pb-2">
+              {/* 4 circle leaders in 2×2 grid */}
+              <div className="grid grid-cols-2 gap-5 max-w-xs mx-auto mb-6">
+                {[LEFT_LEADERS[0], RIGHT_LEADERS[0], LEFT_LEADERS[1], RIGHT_LEADERS[1]].map((l, i) => (
+                  <LeaderCircle key={i} {...l} size="sm" />
+                ))}
+              </div>
+              {/* 2 full-body leaders side by side */}
+              <div className="flex justify-center gap-4">
+                {[LEFT_LEADERS[2], RIGHT_LEADERS[2]].map((l, i) => (
+                  <div key={i} className="text-center" style={{ width: '140px' }}>
+                    <img
+                      src={l.photo}
+                      alt={l.name}
+                      className="object-contain object-top drop-shadow-xl mx-auto"
+                      style={{
+                        width: '115px',
+                        maxHeight: '195px',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                        maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                      }}
+                    />
+                    <p className="text-white font-bold text-[11px] mt-1 leading-tight">{l.name}</p>
+                    {l.role && <p className="text-[#FF9933] text-[10px] font-semibold mt-0.5 leading-tight">{l.role}</p>}
+                    {l.roleEn && <p className="text-primary-300 text-[10px] leading-tight">{l.roleEn}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* ── RIGHT leaders column (desktop only) ── */}

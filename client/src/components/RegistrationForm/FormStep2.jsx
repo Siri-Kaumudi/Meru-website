@@ -16,17 +16,17 @@ export default function FormStep2({ members, onMemberChange, onAddMember, onRemo
           👨‍👩‍👧‍👦 కుటుంబ సభ్యుల వివరాలు / Family Members Details
         </p>
         <p className="text-primary-600 text-xs mt-1">
-          మీ కుటుంబంలోని అందరి వివరాలు నమోదు చేయండి. గరిష్టంగా 8 సభ్యులు. మొదటి సభ్యుడు కుటుంబయజమాని.
+          మీ కుటుంబంలోని అందరి వివరాలు నమోదు చేయండి. గరిష్టంగా 10 సభ్యులు. మొదటి సభ్యుడు కుటుంబయజమాని.
         </p>
-        <p className="text-primary-600 text-xs">Maximum 8 members. First member is the head of household.</p>
+        <p className="text-primary-600 text-xs">Maximum 10 members. First member is the head of household.</p>
       </div>
 
       {/* Member count indicator */}
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm font-semibold text-gray-600">
-          మొత్తం సభ్యులు: <span className="text-primary-700 text-base">{members.length}</span> / 8
+          మొత్తం సభ్యులు: <span className="text-primary-700 text-base">{members.length}</span> / 10
         </div>
-        {members.length < 8 && (
+        {members.length < 10 && (
           <button
             type="button"
             onClick={onAddMember}
@@ -54,7 +54,7 @@ export default function FormStep2({ members, onMemberChange, onAddMember, onRemo
         ))}
       </div>
 
-      {members.length < 8 && (
+      {members.length < 10 && (
         <button
           type="button"
           onClick={onAddMember}
@@ -65,9 +65,9 @@ export default function FormStep2({ members, onMemberChange, onAddMember, onRemo
         </button>
       )}
 
-      {members.length >= 8 && (
+      {members.length >= 10 && (
         <p className="text-center text-amber-600 text-sm mt-4 bg-amber-50 rounded-xl p-3">
-          ⚠️ గరిష్ట సభ్యుల సంఖ్య (8) చేరుకున్నారు
+          ⚠️ గరిష్ట సభ్యుల సంఖ్య (10) చేరుకున్నారు
         </p>
       )}
     </div>

@@ -110,7 +110,7 @@ export default function Register() {
   }
 
   function addMember() {
-    if (members.length < 8) setMembers((prev) => [...prev, { ...EMPTY_MEMBER }]);
+    if (members.length < 10) setMembers((prev) => [...prev, { ...EMPTY_MEMBER }]);
   }
 
   function removeMember(index) {

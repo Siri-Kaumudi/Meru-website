@@ -3,17 +3,10 @@ import { ChevronLeft, ChevronRight, Newspaper } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { getNews } from '../utils/api';
 
-const STATIC_SLIDES = [
-  { _id: 'static-1', imageData: '/newsphoto1.jpeg', title: '', description: '' },
-  { _id: 'static-2', imageData: '/newsphoto2.jpeg', title: '', description: '' },
-  { _id: 'static-3', imageData: '/newsphoto3.jpeg', title: '', description: '' },
-  { _id: 'static-4', imageData: '/newsphoto4.jpeg', title: '', description: '' },
-];
-
 const INTERVAL_MS = 4000;
 
 export default function News() {
-  const [slides, setSlides]   = useState(STATIC_SLIDES);
+  const [slides, setSlides]   = useState([]);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused]   = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,7 +17,7 @@ export default function News() {
     getNews()
       .then(({ data }) => {
         const dynamic = (data.items || []).map((item) => ({ ...item }));
-        setSlides([...STATIC_SLIDES, ...dynamic]);
+        setSlides(dynamic);
       })
       .catch(() => setError('వార్తలు లోడ్ కాలేదు.'))
       .finally(() => setLoading(false));

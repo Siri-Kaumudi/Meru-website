@@ -351,7 +351,7 @@ export default function MemberRow({ member, index, onChange, onRemove, onAadhaar
           </div>
 
           {/* ── Yes/No Toggles ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {YES_NO_FIELDS.filter((f) => !f.headOnly || isHead).map(({ key, label, labelEn, required, options }) => (
               <div
                 key={key}
