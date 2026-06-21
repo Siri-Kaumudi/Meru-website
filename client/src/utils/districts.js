@@ -1,3 +1,48 @@
+// District → Assembly Constituencies (119 total, all 33 Telangana districts)
+export const DISTRICT_CONSTITUENCIES = {
+  'ఆదిలాబాద్':             ['Adilabad', 'Boath'],
+  'కొమరం భీం ఆసిఫాబాద్':   ['Asifabad', 'Khanapur', 'Sirpur'],
+  'మంచిర్యాల':             ['Bellampalli', 'Chennur', 'Mancherial'],
+  'నిర్మల్':               ['Mudhole', 'Nirmal'],
+  'నిజామాబాద్':            ['Armur', 'Balkonda', 'Bodhan', 'Nizamabad Rural', 'Nizamabad Urban'],
+  'కామారెడ్డి':            ['Banswada', 'Jukkal', 'Kamareddy', 'Yellareddy'],
+  'జగిత్యాల':             ['Dharmapuri', 'Jagtial', 'Koratla'],
+  'రాజన్న సిర్సిల్ల':      ['Sircilla', 'Vemulawada'],
+  'కరీంనగర్':              ['Choppadandi', 'Husnabad', 'Huzurabad', 'Karimnagar', 'Manakondur'],
+  'పెద్దపల్లి':            ['Manthani', 'Peddapalle', 'Ramagundam'],
+  'జయశంకర్ భూపాలపల్లి':   ['Bhupalpalle'],
+  'ములుగు':                ['Mulug'],
+  'భద్రాద్రి కొత్తగూడెం':  ['Aswaraopeta', 'Bhadrachalam', 'Kothagudem', 'Pinapaka', 'Yellandu'],
+  'ఖమ్మం':                 ['Khammam', 'Madhira', 'Palair', 'Sathupally', 'Wyra'],
+  'మహబూబాబాద్':            ['Dornakal', 'Mahabubabad'],
+  'వరంగల్':                ['Narsampet', 'Parkal', 'Waradhanapet'],
+  'హనుమకొండ':              ['Warangal East', 'Warangal West'],
+  'జనగాం':                 ['Ghanpur Station', 'Jangaon', 'Palakurthi'],
+  'యాదాద్రి భువనగిరి':     ['Alair', 'Bhongir'],
+  'మేడ్చల్-మల్కాజ్‌గిరి':  ['Kukatpally', 'Malkajgiri', 'Medchal', 'Quthbullapur', 'Uppal'],
+  'హైదరాబాద్':             [
+    'Amberpet', 'Bahadurpura', 'Chandrayangutta', 'Charminar',
+    'Goshamahal', 'Jubilee Hills', 'Karwan', 'Khairatabad',
+    'Malakpet', 'Musheerabad', 'Nampally', 'Sanathnagar',
+    'Secunderabad', 'Secunderabad Cantonment', 'Yakutpura',
+  ],
+  'రంగారెడ్డి':            [
+    'Chevella', 'Ibrahimpatnam', 'Kalwakurthy', 'Lal Bahadur Nagar',
+    'Maheshwaram', 'Rajendranagar', 'Serilingampally', 'Shadnagar',
+  ],
+  'వికారాబాద్':            ['Pargi', 'Tandur', 'Vikarabad'],
+  'సంగారెడ్డి':            ['Andole', 'Narayankhed', 'Sangareddy', 'Zahirabad'],
+  'మేడక్':                 ['Medak', 'Narsapur', 'Patancheru'],
+  'సిద్దిపేట':             ['Dubbak', 'Gajwel', 'Siddipet'],
+  'మహబూబ్‌నగర్':           ['Devarkadra', 'Jadcherla', 'Kodangal', 'Mahbubnagar'],
+  'నారాయణపేట':             ['Narayanpet'],
+  'నాగర్‌కర్నూల్':         ['Achampet', 'Kollapur', 'Makthal', 'Nagarkurnool'],
+  'వనపర్తి':               ['Wanaparthy'],
+  'జోగులాంబ గద్వాల':       ['Alampur', 'Gadwal'],
+  'నల్గొండ':               ['Devarakonda', 'Miryalaguda', 'Munugode', 'Nagarjuna Sagar', 'Nakrekal', 'Nalgonda', 'Thungathurthi'],
+  'సూర్యాపేట':             ['Huzurnagar', 'Kodad', 'Suryapet'],
+};
+
 export const TELANGANA_DISTRICTS = [
   'ఆదిలాబాద్',
   'భద్రాద్రి కొత్తగూడెం',
@@ -65,4 +110,98 @@ export const EDUCATION_OPTIONS = [
   'వైద్య విద్య',
   'పోస్ట్ గ్రాడ్యుయేషన్',
   'ఇతర',
+];
+
+// Grouped occupation + education options for the member form dropdown
+export const OCCUPATION_OPTIONS = [
+  {
+    group: 'వ్యవసాయం / Agriculture',
+    items: [
+      { value: 'రైతు', en: 'Farmer' },
+      { value: 'వ్యవసాయ కూలీ', en: 'Agricultural Labour' },
+      { value: 'పశుపోషణ', en: 'Animal Husbandry' },
+      { value: 'మత్స్యకారుడు', en: 'Fisherman' },
+    ],
+  },
+  {
+    group: 'చేతి వృత్తులు / Skilled Trades',
+    items: [
+      { value: 'దర్జీ / కుట్టు పని', en: 'Tailor / Stitching' },
+      { value: 'వడ్రంగి', en: 'Carpenter' },
+      { value: 'కమ్మరి', en: 'Blacksmith / Welder' },
+      { value: 'మేస్త్రీ (నిర్మాణం)', en: 'Mason / Construction' },
+      { value: 'ఎలక్ట్రీషియన్', en: 'Electrician' },
+      { value: 'ప్లంబర్', en: 'Plumber' },
+      { value: 'మెకానిక్', en: 'Mechanic' },
+      { value: 'క్షురకుడు (Barber)', en: 'Barber' },
+    ],
+  },
+  {
+    group: 'ప్రభుత్వ ఉద్యోగాలు / Government Jobs',
+    items: [
+      { value: 'ప్రభుత్వ ఉద్యోగి', en: 'Government Employee' },
+      { value: 'ఉపాధ్యాయుడు / ఉపాధ్యాయురాలు', en: 'Teacher' },
+      { value: 'పోలీసు / రక్షణ దళం', en: 'Police / Defence' },
+      { value: 'అంగన్వాడీ కార్యకర్త', en: 'Anganwadi Worker' },
+      { value: 'ఆశా కార్యకర్త', en: 'ASHA Worker' },
+    ],
+  },
+  {
+    group: 'ప్రైవేట్ ఉద్యోగాలు / Private Jobs',
+    items: [
+      { value: 'ప్రైవేట్ ఉద్యోగి', en: 'Private Employee' },
+      { value: 'IT ఉద్యోగి', en: 'IT Professional' },
+      { value: 'వైద్యుడు / వైద్యురాలు', en: 'Doctor' },
+      { value: 'నర్సు', en: 'Nurse' },
+      { value: 'లాయర్', en: 'Lawyer' },
+      { value: 'అకౌంటెంట్', en: 'Accountant / Finance' },
+      { value: 'ఇంజినీర్', en: 'Engineer' },
+    ],
+  },
+  {
+    group: 'వ్యాపారం / Business',
+    items: [
+      { value: 'వ్యాపారం', en: 'Business / Trade' },
+      { value: 'చిన్న దుకాణం', en: 'Small Shop / Retail' },
+      { value: 'హోటల్ / రెస్టారెంట్', en: 'Hotel / Restaurant' },
+      { value: 'వ్యవసాయ ఉత్పత్తుల వ్యాపారం', en: 'Agri-produce Trader' },
+    ],
+  },
+  {
+    group: 'రవాణా / Transport',
+    items: [
+      { value: 'ఆటో డ్రైవర్', en: 'Auto Driver' },
+      { value: 'కార్/క్యాబ్ డ్రైవర్', en: 'Car / Cab Driver' },
+      { value: 'ట్రక్/లారీ డ్రైవర్', en: 'Truck / Lorry Driver' },
+      { value: 'ట్రాక్టర్ డ్రైవర్', en: 'Tractor Driver' },
+    ],
+  },
+  {
+    group: 'ఇతర వృత్తులు / Other Occupations',
+    items: [
+      { value: 'రోజువారీ కూలీ', en: 'Daily Wage Labour' },
+      { value: 'గృహిణి', en: 'Housewife' },
+      { value: 'రిటైర్డ్', en: 'Retired' },
+      { value: 'నిరుద్యోగి', en: 'Unemployed' },
+    ],
+  },
+  {
+    group: 'విద్యార్థి / Student',
+    items: [
+      { value: 'విద్యార్థి - ప్రాథమిక పాఠశాల', en: 'Student - Primary School' },
+      { value: 'విద్యార్థి - ఉన్నత పాఠశాల', en: 'Student - High School' },
+      { value: 'విద్యార్థి - ఇంటర్మీడియట్', en: 'Student - Intermediate' },
+      { value: 'విద్యార్థి - డిప్లొమా', en: 'Student - Diploma' },
+      { value: 'విద్యార్థి - డిగ్రీ', en: 'Student - Degree' },
+      { value: 'విద్యార్థి - ఇంజినీరింగ్', en: 'Student - Engineering' },
+      { value: 'విద్యార్థి - వైద్య విద్య', en: 'Student - Medical' },
+      { value: 'విద్యార్థి - పోస్ట్ గ్రాడ్యుయేషన్', en: 'Student - PG' },
+    ],
+  },
+  {
+    group: 'ఇతర / Other',
+    items: [
+      { value: 'ఇతర', en: 'Other' },
+    ],
+  },
 ];

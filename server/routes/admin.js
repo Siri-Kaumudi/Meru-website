@@ -61,6 +61,17 @@ router.get('/stats', auth, async (req, res) => {
       { $sort: { members: -1 } },
     ]);
 
+    // Constituency-wise
+    const constituencyStats = await Household.aggregate([
+      { $group: {
+        _id: '$constituency',
+        district: { $first: '$district' },
+        households: { $sum: 1 },
+        members: { $sum: { $size: '$members' } },
+      }},
+      { $sort: { members: -1 } },
+    ]);
+
     // Gender breakdown
     const genderStats = await Household.aggregate([
       { $unwind: '$members' },
@@ -76,13 +87,14 @@ router.get('/stats', auth, async (req, res) => {
         rationCardYes: { $sum: { $cond: [{ $eq: ['$members.rationCard', 'ఉంది'] }, 1, 0] } },
         pensionYes: { $sum: { $cond: [{ $eq: ['$members.governmentPension', 'వస్తుంది'] }, 1, 0] } },
         freeUnitsYes: { $sum: { $cond: [{ $eq: ['$members.freeUnits200', 'వస్తుంది'] }, 1, 0] } },
+        tailoringDependentYes: { $sum: { $cond: [{ $eq: ['$members.tailoringDependent', 'అవును'] }, 1, 0] } },
       }},
     ]);
 
     res.json({
       totalHouseholds, totalIndividuals,
       todayHouseholds, weekHouseholds, monthHouseholds,
-      districtStats, genderStats,
+      districtStats, constituencyStats, genderStats,
       welfareStats: welfareStats[0] || {},
     });
   } catch (err) {
@@ -128,6 +140,7 @@ router.get('/households', auth, async (req, res) => {
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const search = req.query.search || '';
     const district = req.query.district || '';
+    const constituency = req.query.constituency || '';
     const skip = (page - 1) * limit;
 
     const query = {};
@@ -140,6 +153,7 @@ router.get('/households', auth, async (req, res) => {
       ];
     }
     if (district) query.district = district;
+    if (constituency) query.constituency = constituency;
 
     const [households, total] = await Promise.all([
       Household.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).select('-ipAddress'),
@@ -183,6 +197,7 @@ router.get('/export', auth, async (req, res) => {
           'రేషన్ కార్డు': m.rationCard || '',
           'ఉచిత కరెంటు 200 యూనిట్లు': m.freeUnits200 || '',
           'మొబైల్ నంబర్': m.mobileNo || '',
+          'కుట్టు మీద ఆధారపడతారా': m.tailoringDependent || '',
           'నమోదు తేదీ': new Date(hh.createdAt).toLocaleString('en-IN'),
         });
       });

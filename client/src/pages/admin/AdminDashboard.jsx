@@ -7,7 +7,7 @@ import {
 import { LogOut, Download, Search, RefreshCw, Users, Home, Calendar, TrendingUp, ChevronLeft, ChevronRight, Newspaper, Trash2, Plus, Eye, EyeOff } from 'lucide-react';
 import { getStats, getDailyStats, getHouseholds, exportToExcel, getAdminNews, addNewsItem, deleteNewsItem, updateNewsItem } from '../../utils/api';
 import SewingMachineIcon from '../../components/SewingMachineIcon';
-import { TELANGANA_DISTRICTS } from '../../utils/districts';
+import { TELANGANA_DISTRICTS, DISTRICT_CONSTITUENCIES } from '../../utils/districts';
 
 const PIE_COLORS = ['#2563eb', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
 
@@ -42,10 +42,12 @@ export default function AdminDashboard() {
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [search, setSearch] = useState('');
   const [filterDistrict, setFilterDistrict] = useState('');
+  const [filterConstituency, setFilterConstituency] = useState('');
   const [loading, setLoading] = useState(true);
   const [tableLoading, setTableLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [days, setDays] = useState(30);
+  const [summaryView, setSummaryView] = useState('constituency'); // 'constituency' | 'district'
 
   const fetchStats = useCallback(async () => {
     try {
@@ -59,12 +61,12 @@ export default function AdminDashboard() {
   const fetchHouseholds = useCallback(async (page = 1) => {
     setTableLoading(true);
     try {
-      const res = await getHouseholds({ page, limit: 20, search, district: filterDistrict });
+      const res = await getHouseholds({ page, limit: 20, search, district: filterDistrict, constituency: filterConstituency });
       setHouseholds(res.data.households);
       setPagination({ page: res.data.page, pages: res.data.pages, total: res.data.total });
     } catch { /* ignore */ }
     finally { setTableLoading(false); }
-  }, [search, filterDistrict]);
+  }, [search, filterDistrict, filterConstituency]);
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
   useEffect(() => { if (activeTab === 'data') fetchHouseholds(1); }, [activeTab, fetchHouseholds]);
@@ -154,12 +156,13 @@ export default function AdminDashboard() {
             {stats?.welfareStats && (
               <div className="card">
                 <h3 className="font-bold text-gray-800 mb-4">సంక్షేమ పథకాల వివరాలు / Welfare Statistics</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                   {[
                     { label: 'సొంత ఇల్లు ఉన్నది', labelEn: 'Own House', value: stats.welfareStats.ownHouseYes },
                     { label: 'రేషన్ కార్డు ఉంది', labelEn: 'Ration Card', value: stats.welfareStats.rationCardYes },
                     { label: 'ప్రభుత్వ పెన్షన్', labelEn: 'Govt Pension', value: stats.welfareStats.pensionYes },
                     { label: 'ఉచిత 200 యూనిట్లు', labelEn: 'Free 200 Units', value: stats.welfareStats.freeUnitsYes },
+                    { label: 'కుట్టు మీద ఆధారపడతారు', labelEn: 'Depend on Tailoring', value: stats.welfareStats.tailoringDependentYes },
                   ].map((item) => (
                     <div key={item.labelEn} className="bg-primary-50 rounded-xl p-4 text-center">
                       <div className="text-2xl font-bold text-primary-700">{(item.value || 0).toLocaleString('en-IN')}</div>
@@ -171,40 +174,107 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* District Summary */}
+            {/* Constituency / District Summary */}
             <div className="card">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-800">జిల్లా వారీ నమోదు / District-wise</h3>
-                <button
-                  onClick={() => exportToExcel(filterDistrict)}
-                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-xl transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                  Excel డౌన్‌లోడ్
-                </button>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-bold text-gray-800">
+                    {summaryView === 'constituency'
+                      ? 'నియోజకవర్గం వారీ నమోదు / Constituency-wise'
+                      : 'జిల్లా వారీ నమోదు / District-wise'}
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {summaryView === 'constituency'
+                      ? `${(stats?.constituencyStats || []).length} నియోజకవర్గాలు`
+                      : `${(stats?.districtStats || []).length} జిల్లాలు`}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {/* Toggle */}
+                  <div className="flex rounded-xl border border-gray-200 overflow-hidden text-xs font-semibold">
+                    <button
+                      onClick={() => setSummaryView('constituency')}
+                      className={`px-3 py-2 transition-colors ${
+                        summaryView === 'constituency'
+                          ? 'bg-primary-700 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      నియోజకవర్గం వారీ
+                    </button>
+                    <button
+                      onClick={() => setSummaryView('district')}
+                      className={`px-3 py-2 border-l border-gray-200 transition-colors ${
+                        summaryView === 'district'
+                          ? 'bg-primary-700 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      జిల్లా వారీ
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => exportToExcel(filterDistrict)}
+                    className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Excel
+                  </button>
+                </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="text-left p-3 font-semibold text-gray-700">జిల్లా</th>
-                      <th className="text-right p-3 font-semibold text-gray-700">కుటుంబాలు</th>
-                      <th className="text-right p-3 font-semibold text-gray-700">సభ్యులు</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(stats?.districtStats || []).slice(0, 15).map((d, i) => (
-                      <tr key={d._id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                        <td className="p-3">{d._id}</td>
-                        <td className="p-3 text-right font-medium">{d.households}</td>
-                        <td className="p-3 text-right font-medium text-primary-600">{d.members}</td>
+
+              <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                {summaryView === 'constituency' ? (
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0">
+                      <tr className="bg-gray-50">
+                        <th className="text-left p-3 font-semibold text-gray-700">#</th>
+                        <th className="text-left p-3 font-semibold text-gray-700">నియోజకవర్గం</th>
+                        <th className="text-left p-3 font-semibold text-gray-700">జిల్లా</th>
+                        <th className="text-right p-3 font-semibold text-gray-700">కుటుంబాలు</th>
+                        <th className="text-right p-3 font-semibold text-gray-700">సభ్యులు</th>
                       </tr>
-                    ))}
-                    {(!stats?.districtStats || stats.districtStats.length === 0) && (
-                      <tr><td colSpan={3} className="p-6 text-center text-gray-400">డేటా లేదు</td></tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {(stats?.constituencyStats || []).map((c, i) => (
+                        <tr key={c._id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="p-3 text-gray-400 text-xs">{i + 1}</td>
+                          <td className="p-3 font-medium">{c._id || '—'}</td>
+                          <td className="p-3 text-gray-500 text-xs">{c.district}</td>
+                          <td className="p-3 text-right font-medium">{c.households}</td>
+                          <td className="p-3 text-right font-medium text-primary-600">{c.members}</td>
+                        </tr>
+                      ))}
+                      {(!stats?.constituencyStats || stats.constituencyStats.length === 0) && (
+                        <tr><td colSpan={5} className="p-6 text-center text-gray-400">డేటా లేదు</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0">
+                      <tr className="bg-gray-50">
+                        <th className="text-left p-3 font-semibold text-gray-700">#</th>
+                        <th className="text-left p-3 font-semibold text-gray-700">జిల్లా</th>
+                        <th className="text-right p-3 font-semibold text-gray-700">కుటుంబాలు</th>
+                        <th className="text-right p-3 font-semibold text-gray-700">సభ్యులు</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(stats?.districtStats || []).map((d, i) => (
+                        <tr key={d._id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="p-3 text-gray-400 text-xs">{i + 1}</td>
+                          <td className="p-3">{d._id}</td>
+                          <td className="p-3 text-right font-medium">{d.households}</td>
+                          <td className="p-3 text-right font-medium text-primary-600">{d.members}</td>
+                        </tr>
+                      ))}
+                      {(!stats?.districtStats || stats.districtStats.length === 0) && (
+                        <tr><td colSpan={4} className="p-6 text-center text-gray-400">డేటా లేదు</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
@@ -282,32 +352,53 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             {/* Filters */}
             <div className="card">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <form onSubmit={handleSearch} className="flex flex-1 gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="పేరు, మొబైల్, గ్రామం వెతకండి..."
-                      className="input-field pl-10 py-2.5 text-sm"
-                    />
-                  </div>
-                  <button type="submit" className="btn-primary py-2.5 px-4 text-sm">వెతకు</button>
-                </form>
-                <select
-                  value={filterDistrict}
-                  onChange={(e) => { setFilterDistrict(e.target.value); fetchHouseholds(1); }}
-                  className="input-field py-2.5 text-sm sm:w-48"
-                >
-                  <option value="">అన్ని జిల్లాలు</option>
-                  {TELANGANA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
-                </select>
-                <button onClick={() => exportToExcel(filterDistrict)} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2.5 rounded-xl whitespace-nowrap">
-                  <Download className="w-4 h-4" />
-                  Excel
-                </button>
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <form onSubmit={handleSearch} className="flex flex-1 gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="పేరు, మొబైల్, గ్రామం వెతకండి..."
+                        className="input-field pl-10 py-2.5 text-sm"
+                      />
+                    </div>
+                    <button type="submit" className="btn-primary py-2.5 px-4 text-sm">వెతకు</button>
+                  </form>
+                  <button onClick={() => exportToExcel(filterDistrict)} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2.5 rounded-xl whitespace-nowrap">
+                    <Download className="w-4 h-4" />
+                    Excel
+                  </button>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <select
+                    value={filterDistrict}
+                    onChange={(e) => {
+                      setFilterDistrict(e.target.value);
+                      setFilterConstituency('');
+                      fetchHouseholds(1);
+                    }}
+                    className="input-field py-2.5 text-sm sm:w-52"
+                  >
+                    <option value="">అన్ని జిల్లాలు</option>
+                    {TELANGANA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                  <select
+                    value={filterConstituency}
+                    onChange={(e) => { setFilterConstituency(e.target.value); fetchHouseholds(1); }}
+                    disabled={!filterDistrict}
+                    className={`input-field py-2.5 text-sm sm:w-52 ${!filterDistrict ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <option value="">
+                      {filterDistrict ? 'అన్ని నియోజకవర్గాలు' : '-- ముందు జిల్లా ఎంచుకోండి --'}
+                    </option>
+                    {(filterDistrict ? (DISTRICT_CONSTITUENCIES[filterDistrict] || []) : []).map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <p className="text-xs text-gray-400 mt-2">మొత్తం: {pagination.total} కుటుంబాలు</p>
             </div>
@@ -320,7 +411,7 @@ export default function AdminDashboard() {
                     <tr>
                       <th className="p-3 text-left">#</th>
                       <th className="p-3 text-left">గ్రామం / మండలం</th>
-                      <th className="p-3 text-left">జిల్లా</th>
+                      <th className="p-3 text-left">నియోజకవర్గం / జిల్లా</th>
                       <th className="p-3 text-left">రేషన్ నెం.</th>
                       <th className="p-3 text-center">సభ్యులు</th>
                       <th className="p-3 text-left">నమోదు తేదీ</th>
@@ -339,7 +430,10 @@ export default function AdminDashboard() {
                             <div className="font-medium">{hh.village}</div>
                             <div className="text-xs text-gray-400">{hh.mandal}</div>
                           </td>
-                          <td className="p-3">{hh.district}</td>
+                          <td className="p-3">
+                            <div className="font-medium text-sm">{hh.constituency || '—'}</div>
+                            <div className="text-xs text-gray-400">{hh.district}</div>
+                          </td>
                           <td className="p-3 text-xs text-gray-500">{hh.rationCardNo || '—'}</td>
                           <td className="p-3 text-center">
                             <span className="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-1 rounded-full">

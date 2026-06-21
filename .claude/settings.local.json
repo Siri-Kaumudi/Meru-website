@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node tests/validators.test.js)"
+      "Bash(node tests/validators.test.js)",
+      "WebFetch(domain:ceotelangana.nic.in)",
+      "WebFetch(domain:en.wikipedia.org)"
     ]
   }
 }

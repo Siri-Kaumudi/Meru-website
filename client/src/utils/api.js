@@ -29,6 +29,7 @@ export default api;
 // Public endpoints
 export const getCount = () => api.get('/members/count');
 export const registerHousehold = (data) => api.post('/members/register', data);
+export const checkAadhaar = (aadhaar) => api.get(`/members/check-aadhaar?aadhaar=${aadhaar}`);
 
 // News endpoints (public)
 export const getNews = () => api.get('/news');

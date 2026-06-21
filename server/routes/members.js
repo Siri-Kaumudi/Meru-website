@@ -11,6 +11,14 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const checkLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { message: 'చాలా అభ్యర్థనలు. కొద్ది సేపు వేచి ఉండండి.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // POST /api/members/register — register a whole household
 router.post('/register', registerLimiter, async (req, res) => {
   try {
@@ -86,6 +94,7 @@ router.post('/register', registerLimiter, async (req, res) => {
       governmentPension: m.governmentPension || '',
       rationCard: m.rationCard || '',
       freeUnits200: i === 0 ? m.freeUnits200 : '',
+      tailoringDependent: m.tailoringDependent || '',
       mobileNo: m.mobileNo || '',
     }));
 
@@ -130,6 +139,23 @@ router.post('/register', registerLimiter, async (req, res) => {
     }
     console.error('Registration error:', err);
     res.status(500).json({ message: 'Server error. దయచేసి మళ్ళీ ప్రయత్నించండి.' });
+  }
+});
+
+// GET /api/members/check-aadhaar?aadhaar=XXXXXXXXXXXX
+router.get('/check-aadhaar', checkLimiter, async (req, res) => {
+  try {
+    const { aadhaar } = req.query;
+    if (!aadhaar || !/^\d{12}$/.test(aadhaar)) {
+      return res.status(400).json({ message: 'చెల్లుబాటు అయ్యే ఆధార్ నంబర్ పంపండి' });
+    }
+    const exists = await Household.findOne(
+      { 'members.aadhaarNo': aadhaar },
+      { _id: 1 }
+    ).lean();
+    res.json({ taken: !!exists });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

@@ -1,4 +1,4 @@
-import { TELANGANA_DISTRICTS } from '../../utils/districts';
+import { TELANGANA_DISTRICTS, DISTRICT_CONSTITUENCIES } from '../../utils/districts';
 
 // Capitalise first letter of each word, but only for pure-English input
 function toTitleCase(v) {
@@ -11,6 +11,14 @@ export default function FormStep1({ data, onChange, errors }) {
     onChange: (e) => onChange(name, toTitleCase(e.target.value)),
     className: `input-field ${errors[name] ? 'input-error' : ''}`,
   });
+
+  // When district changes, clear constituency
+  const handleDistrictChange = (e) => {
+    onChange('district', e.target.value);
+    onChange('constituency', '');
+  };
+
+  const constituencies = data.district ? (DISTRICT_CONSTITUENCIES[data.district] || []) : [];
 
   return (
     <div className="animate-slide-up">
@@ -74,29 +82,45 @@ export default function FormStep1({ data, onChange, errors }) {
           {errors.divisionWardNo && <p className="text-red-500 text-xs mt-1">{errors.divisionWardNo}</p>}
         </div>
 
-        {/* Constituency */}
-        <div>
-          <label className="label-field">
-            నియోజకవర్గం <span className="text-red-500">*</span>
-            <span className="block text-xs font-normal text-gray-400">Constituency</span>
-          </label>
-          <input type="text" placeholder="నియోజకవర్గం పేరు" maxLength={100} {...field('constituency')} />
-          {errors.constituency && <p className="text-red-500 text-xs mt-1">{errors.constituency}</p>}
-        </div>
-
-        {/* District */}
+        {/* District — select first, drives constituency */}
         <div>
           <label className="label-field">
             జిల్లా <span className="text-red-500">*</span>
             <span className="block text-xs font-normal text-gray-400">District</span>
           </label>
-          <select {...field('district')}>
+          <select
+            value={data.district || ''}
+            onChange={handleDistrictChange}
+            className={`input-field ${errors.district ? 'input-error' : ''}`}
+          >
             <option value="">-- జిల్లా ఎంచుకోండి --</option>
             {TELANGANA_DISTRICTS.map((d) => (
               <option key={d} value={d}>{d}</option>
             ))}
           </select>
           {errors.district && <p className="text-red-500 text-xs mt-1">{errors.district}</p>}
+        </div>
+
+        {/* Constituency — dependent on district */}
+        <div>
+          <label className="label-field">
+            నియోజకవర్గం <span className="text-red-500">*</span>
+            <span className="block text-xs font-normal text-gray-400">Constituency</span>
+          </label>
+          <select
+            value={data.constituency || ''}
+            onChange={(e) => onChange('constituency', e.target.value)}
+            disabled={!data.district}
+            className={`input-field ${errors.constituency ? 'input-error' : ''} ${!data.district ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <option value="">
+              {data.district ? '-- నియోజకవర్గం ఎంచుకోండి --' : '-- ముందు జిల్లా ఎంచుకోండి --'}
+            </option>
+            {constituencies.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          {errors.constituency && <p className="text-red-500 text-xs mt-1">{errors.constituency}</p>}
         </div>
 
         {/* State */}

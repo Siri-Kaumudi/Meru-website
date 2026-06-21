@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import SewingMachineIcon from './SewingMachineIcon';
+import TailorTape from './TailorTape';
 
 const NAV_LINKS = [
   { to: '/',         te: 'హోమ్',       en: 'Home' },
@@ -14,9 +15,19 @@ const NAV_LINKS = [
 export default function Navbar() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const [atTop, setAtTop] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => setAtTop(window.scrollY === 0);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Re-check immediately whenever pathname changes (page navigation resets scroll)
+    setAtTop(window.scrollY === 0);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [pathname]);
 
   return (
-    <nav className="bg-primary-900 text-white shadow-lg sticky top-0 z-50">
+    <div className="sticky top-0 z-50">
+    <nav className="bg-primary-900 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0" onClick={() => setOpen(false)}>
@@ -81,5 +92,15 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    {pathname === '/' && (
+      <div style={{
+        maxHeight : atTop ? '50px' : '0px',
+        overflow  : 'hidden',
+        transition: 'max-height 0.3s ease-out',
+      }}>
+        <TailorTape />
+      </div>
+    )}
+    </div>
   );
 }

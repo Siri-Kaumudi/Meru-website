@@ -1,6 +1,7 @@
-import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import { useState } from 'react';
-import { RELATIONSHIP_OPTIONS } from '../../utils/districts';
+import { Trash2, ChevronDown, ChevronUp, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { RELATIONSHIP_OPTIONS, OCCUPATION_OPTIONS } from '../../utils/districts';
+import { checkAadhaar } from '../../utils/api';
 
 // Capitalise first letter of each word, but only for pure-English input
 function toTitleCase(v) {
@@ -68,10 +69,47 @@ const YES_NO_FIELDS = [
       { value: 'లేదు',     te: 'లేదు',     en: 'No'  },
     ],
   },
+  {
+    key: 'tailoringDependent',
+    label: 'కుట్టు మీద ఆధారపడతారా?', labelEn: 'Depend on Tailoring?',
+    required: false,
+    options: [
+      { value: 'అవును', te: 'అవును', en: 'Yes' },
+      { value: 'కాదు',  te: 'కాదు',  en: 'No'  },
+    ],
+  },
 ];
 
-export default function MemberRow({ member, index, onChange, onRemove, errors, canRemove, isHead }) {
+// 'idle' | 'checking' | 'taken' | 'available'
+export default function MemberRow({ member, index, onChange, onRemove, onAadhaarStatus, errors, canRemove, isHead }) {
   const [expanded, setExpanded] = useState(true);
+  const [aadhaarStatus, setAadhaarStatus] = useState('idle');
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    const digits = member.aadhaarNo || '';
+    if (digits.length < 12) {
+      setAadhaarStatus('idle');
+      onAadhaarStatus?.(index, 'idle');
+      return;
+    }
+    // 12 digits — debounce 600 ms then check
+    clearTimeout(debounceRef.current);
+    setAadhaarStatus('checking');
+    onAadhaarStatus?.(index, 'checking');
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const { data } = await checkAadhaar(digits);
+        const status = data.taken ? 'taken' : 'available';
+        setAadhaarStatus(status);
+        onAadhaarStatus?.(index, status);
+      } catch {
+        setAadhaarStatus('idle');
+        onAadhaarStatus?.(index, 'idle');
+      }
+    }, 600);
+    return () => clearTimeout(debounceRef.current);
+  }, [member.aadhaarNo, index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const field = (key) => ({
     value: member[key] || '',
@@ -213,7 +251,16 @@ export default function MemberRow({ member, index, onChange, onRemove, errors, c
                 వృత్తి / ఉద్యోగం / చదువు
                 <span className="block font-normal text-gray-400">Occupation / Job / Education</span>
               </label>
-              <input type="text" placeholder="ఉదా: రైతు, ఉపాధ్యాయుడు, విద్యార్థి..." maxLength={200} {...field('occupationOrEducation')} />
+              <select {...field('occupationOrEducation')}>
+                <option value="">-- ఎంచుకోండి / Select --</option>
+                {OCCUPATION_OPTIONS.map(({ group, items }) => (
+                  <optgroup key={group} label={group}>
+                    {items.map(({ value, en }) => (
+                      <option key={value} value={value}>{value} / {en}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
 
             {/* Aadhaar */}
@@ -222,16 +269,37 @@ export default function MemberRow({ member, index, onChange, onRemove, errors, c
                 ఆధార్ నంబర్ <span className="text-red-500">*</span>
                 <span className="block font-normal text-gray-400">Aadhaar Number</span>
               </label>
-              <input
-                type="text"
-                placeholder="XXXX XXXX XXXX"
-                maxLength={14}
-                inputMode="numeric"
-                value={formatAadhaar(member.aadhaarNo)}
-                onChange={(e) => onChange(index, 'aadhaarNo', e.target.value.replace(/\D/g, '').slice(0, 12))}
-                className={`input-field text-sm py-2 tracking-widest ${err('aadhaarNo') ? 'input-error' : ''}`}
-              />
-              {err('aadhaarNo') && <p className="text-red-500 text-xs mt-1">{err('aadhaarNo')}</p>}
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="XXXX XXXX XXXX"
+                  maxLength={14}
+                  inputMode="numeric"
+                  value={formatAadhaar(member.aadhaarNo)}
+                  onChange={(e) => onChange(index, 'aadhaarNo', e.target.value.replace(/\D/g, '').slice(0, 12))}
+                  className={`input-field text-sm py-2 tracking-widest pr-8 ${
+                    aadhaarStatus === 'taken' || err('aadhaarNo') ? 'input-error' : ''
+                  } ${aadhaarStatus === 'available' ? 'border-green-400 focus:ring-green-300' : ''}`}
+                />
+                {/* Status icon inside input */}
+                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                  {aadhaarStatus === 'checking'  && <Loader2    className="w-4 h-4 text-gray-400 animate-spin" />}
+                  {aadhaarStatus === 'available' && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                  {aadhaarStatus === 'taken'     && <XCircle     className="w-4 h-4 text-red-500"   />}
+                </span>
+              </div>
+              {aadhaarStatus === 'checking' && (
+                <p className="text-gray-400 text-xs mt-1">తనిఖీ అవుతోంది... / Checking...</p>
+              )}
+              {aadhaarStatus === 'available' && (
+                <p className="text-green-600 text-xs mt-1">✓ అందుబాటులో ఉంది / Available</p>
+              )}
+              {aadhaarStatus === 'taken' && (
+                <p className="text-red-500 text-xs mt-1">❌ ఈ ఆధార్ నంబర్ ఇప్పటికే నమోదైంది / Already registered</p>
+              )}
+              {err('aadhaarNo') && aadhaarStatus !== 'taken' && (
+                <p className="text-red-500 text-xs mt-1">{err('aadhaarNo')}</p>
+              )}
             </div>
 
             {/* Mobile */}

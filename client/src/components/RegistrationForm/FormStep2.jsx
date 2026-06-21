@@ -4,10 +4,11 @@ import MemberRow from './MemberRow';
 const EMPTY_MEMBER = {
   surname: '', name: '', aadhaarNo: '', age: '', gender: '', relationshipWithHead: '',
   occupationOrEducation: '', ownHouse: '', welfareSchemes: '',
-  maritalStatus: '', governmentPension: '', rationCard: '', freeUnits200: '', mobileNo: '',
+  maritalStatus: '', governmentPension: '', rationCard: '', freeUnits200: '',
+  tailoringDependent: '', mobileNo: '',
 };
 
-export default function FormStep2({ members, onMemberChange, onAddMember, onRemoveMember, errors }) {
+export default function FormStep2({ members, onMemberChange, onAddMember, onRemoveMember, onAadhaarStatus, errors }) {
   return (
     <div className="animate-slide-up">
       <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 mb-6">
@@ -45,6 +46,7 @@ export default function FormStep2({ members, onMemberChange, onAddMember, onRemo
             index={i}
             onChange={onMemberChange}
             onRemove={onRemoveMember}
+            onAadhaarStatus={onAadhaarStatus}
             errors={errors}
             canRemove={i > 0}
             isHead={i === 0}

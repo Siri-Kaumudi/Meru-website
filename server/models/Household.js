@@ -74,6 +74,10 @@ const memberSchema = new mongoose.Schema(
       trim: true,
       match: [/^$|^[6-9]\d{9}$/, 'చెల్లుబాటు అయ్యే మొబైల్ నంబర్ నమోదు చేయండి'],
     },
+    tailoringDependent: {
+      type: String,
+      enum: { values: ['అవును', 'కాదు', ''], message: 'సరైన విలువ కాదు' },
+    },
   },
   { _id: false }
 );

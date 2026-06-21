@@ -71,6 +71,8 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
+  // per-member Aadhaar check status: { 0: 'available', 1: 'taken', ... }
+  const [aadhaarStatuses, setAadhaarStatuses] = useState({});
 
   // Keep URL hash in sync with current step and scroll to top
   useEffect(() => {
@@ -98,6 +100,15 @@ export default function Register() {
     if (errors[errKey]) setErrors((e) => { const n = { ...e }; delete n[errKey]; return n; });
   }
 
+  function handleAadhaarStatus(index, status) {
+    setAadhaarStatuses((prev) => ({ ...prev, [index]: status }));
+    // Clear any existing taken-error for this member when status changes
+    const errKey = `member_${index}_aadhaarNo`;
+    if (status !== 'taken' && errors[errKey]) {
+      setErrors((e) => { const n = { ...e }; delete n[errKey]; return n; });
+    }
+  }
+
   function addMember() {
     if (members.length < 8) setMembers((prev) => [...prev, { ...EMPTY_MEMBER }]);
   }
@@ -120,13 +131,30 @@ export default function Register() {
 
   function validateStep2() {
     const errs = validateAllMembers(members);
+
+    // Inject errors for Aadhaar numbers that are already registered
+    Object.entries(aadhaarStatuses).forEach(([idx, status]) => {
+      if (status === 'taken') {
+        errs[`member_${idx}_aadhaarNo`] = 'ఈ ఆధార్ నంబర్ ఇప్పటికే నమోదైంది / Already registered';
+      }
+    });
+
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
 
   function handleNext() {
     if (step === 1 && validateStep1()) setStep(2);
-    else if (step === 2 && validateStep2()) setStep(3);
+    else if (step === 2) {
+      // Block if any Aadhaar is still being checked
+      const isChecking = Object.values(aadhaarStatuses).some((s) => s === 'checking');
+      if (isChecking) {
+        setServerError('ఆధార్ నంబర్ తనిఖీ పూర్తి కాలేదు. దయచేసి కొద్ది సేపు వేచి ఉండండి. / Aadhaar check in progress, please wait.');
+        return;
+      }
+      setServerError('');
+      if (validateStep2()) setStep(3);
+    }
   }
 
   function handleBack() {
@@ -213,6 +241,7 @@ export default function Register() {
               onMemberChange={handleMemberChange}
               onAddMember={addMember}
               onRemoveMember={removeMember}
+              onAadhaarStatus={handleAadhaarStatus}
               errors={errors}
             />
           )}
