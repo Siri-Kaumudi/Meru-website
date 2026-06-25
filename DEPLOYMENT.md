@@ -245,17 +245,12 @@ Install Nginx:
 sudo apt install -y nginx
 ```
 
-**First time (before SSL):** use the HTTP-only config:
+**First time (before SSL):** copy the HTTP bootstrap into `sites-available` and enable it:
 
 ```bash
 sudo mkdir -p /var/www/certbot
-sudo cp /opt/meru-website/nginx/nginx.http.conf /etc/nginx/sites-available/meracorporation.in
-```
-
-Enable the site:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/meracorporation.in /etc/nginx/sites-enabled/
+sudo cp /opt/meru-website/nginx/sites-available/meracorporation.in.http /etc/nginx/sites-available/meracorporation.in
+sudo ln -sf /etc/nginx/sites-available/meracorporation.in /etc/nginx/sites-enabled/meracorporation.in
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
@@ -281,7 +276,22 @@ Admin panel: `http://meracorporation.in/admin`
 sudo apt install -y certbot python3-certbot-nginx
 ```
 
-Obtain certificates:
+Obtain certificates with Certbot (same style as your other sites):
+
+```bash
+sudo certbot --nginx -d meracorporation.in -d www.meracorporation.in
+```
+
+Certbot updates `/etc/nginx/sites-available/meracorporation.in` automatically.
+
+If you prefer to copy the HTTPS config manually after certificates exist:
+
+```bash
+sudo cp /opt/meru-website/nginx/sites-available/meracorporation.in /etc/nginx/sites-available/meracorporation.in
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Alternative — webroot only (if not using `certbot --nginx`):
 
 ```bash
 sudo certbot certonly --webroot -w /var/www/certbot \
@@ -292,19 +302,18 @@ sudo certbot certonly --webroot -w /var/www/certbot \
   --no-eff-email
 ```
 
-Generate SSL options (if not already present):
+Generate SSL options (if not already present from other sites on this VPS):
 
 ```bash
 sudo curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -o /etc/letsencrypt/options-ssl-nginx.conf
 sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
 ```
 
-Switch to the full HTTPS config:
+Then copy the HTTPS site config:
 
 ```bash
-sudo cp /opt/meru-website/nginx/nginx.conf /etc/nginx/sites-available/meracorporation.in
-sudo nginx -t
-sudo systemctl reload nginx
+sudo cp /opt/meru-website/nginx/sites-available/meracorporation.in /etc/nginx/sites-available/meracorporation.in
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
 Certificate files used by Nginx:
@@ -484,7 +493,7 @@ cd /opt/meru-website/frontend && npm run build
 ls /opt/meru-website/frontend/build/
 ```
 
-Nginx must point to `/opt/meru-website/frontend/build` (see `nginx/nginx.conf`).
+Nginx must point to `/opt/meru-website/frontend/build` (see `nginx/sites-available/meracorporation.in`).
 
 ### Admin login fails
 
@@ -510,8 +519,9 @@ Usually caused by missing `JWT_SECRET` in `backend/.env` or MongoDB not ready ye
 | `/opt/meru-website/backend/Dockerfile` | Backend image (Node 22) |
 | `/opt/meru-website/backend/.env` | Production secrets |
 | `/opt/meru-website/frontend/build/` | Built React app (Nginx serves this) |
-| `/opt/meru-website/nginx/nginx.conf` | Full HTTPS Nginx config (after Certbot) |
-| `/opt/meru-website/nginx/nginx.http.conf` | HTTP-only bootstrap config (before SSL) |
+| `/opt/meru-website/nginx/sites-available/meracorporation.in.http` | HTTP bootstrap — use before Certbot |
+| `/opt/meru-website/nginx/sites-available/meracorporation.in` | HTTPS config (Certbot style) — use after SSL |
+| `/opt/meru-website/nginx/README.md` | Copy/symlink instructions |
 
 ---
 

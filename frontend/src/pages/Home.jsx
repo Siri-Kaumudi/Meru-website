@@ -166,21 +166,23 @@ export default function Home() {
                   <LeaderCircle key={i} {...l} size="sm" />
                 ))}
               </div>
-              {/* 2 full-body leaders side by side */}
-              <div className="flex justify-center gap-4">
+              {/* 2 full-body leaders side by side — fixed height so both look the same size */}
+              <div className="flex justify-center items-start gap-3 px-2">
                 {[LEFT_LEADERS[2], RIGHT_LEADERS[2]].map((l, i) => (
-                  <div key={i} className="text-center" style={{ width: '160px' }}>
-                    <img
-                      src={l.photo}
-                      alt={l.name}
-                      className="object-contain object-top drop-shadow-xl mx-auto"
+                  <div key={i} className="text-center flex-1 max-w-[168px] min-w-0">
+                    <div
+                      className="mx-auto w-[145px] h-[200px] overflow-hidden drop-shadow-xl"
                       style={{
-                        width: '145px',
-                        maxHeight: '240px',
                         WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
                         maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
                       }}
-                    />
+                    >
+                      <img
+                        src={l.photo}
+                        alt={l.name}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </div>
                     <p className="text-white font-bold text-[11px] mt-1 leading-tight">{l.name}</p>
                     {l.role && <p className="text-[#FF9933] text-[10px] font-semibold mt-0.5 leading-tight">{l.role}</p>}
                     {l.roleEn && <p className="text-primary-300 text-[10px] leading-tight">{l.roleEn}</p>}

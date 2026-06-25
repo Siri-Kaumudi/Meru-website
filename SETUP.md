@@ -122,7 +122,7 @@ meru-website/
 │       ├── utils/       ← API, validators, districts
 │       └── data/        ← Leaders data
 ├── docker-compose.yml   ← MongoDB + backend
-└── nginx/nginx.conf     ← Sample host Nginx config
+└── nginx/sites-available/  ← Nginx configs (see nginx/README.md)
 ```
 
 ---
