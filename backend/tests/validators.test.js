@@ -1,6 +1,6 @@
 /**
  * Server-side validation tests
- * Run: cd server && node tests/validators.test.js
+ * Run: cd backend && node tests/validators.test.js
  */
 
 let passed = 0;

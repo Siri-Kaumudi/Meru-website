@@ -1,6 +1,6 @@
 /**
  * Client-side validator tests
- * Run: node src/utils/validators.test.js  (from client folder, after removing ES module imports)
+ * Run: node src/utils/validators.test.js  (from frontend folder)
  */
 
 import { validateHousehold, validateMember, validateAllMembers } from './validators.js';

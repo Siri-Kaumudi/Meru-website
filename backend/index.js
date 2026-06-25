@@ -11,6 +11,8 @@ const newsRoutes = require('./routes/news');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(helmet());
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
@@ -40,13 +42,13 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: 'Something went wrong. Please try again.' });
 });
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/meru-website';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27015/meru-website';
 
 mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log('✅  MongoDB connected:', MONGO_URI);
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 5500;
     app.listen(PORT, () => console.log(`🚀  Server running on http://localhost:${PORT}`));
   })
   .catch((err) => {

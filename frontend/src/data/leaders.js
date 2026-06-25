@@ -1,5 +1,5 @@
 // Update these with actual leader photos and names
-// Place photos in client/public/leaders/ folder as leader1.jpg, leader2.jpg etc.
+// Place photos in frontend/public/leaders/ folder as leader1.jpg, leader2.jpg etc.
 
 export const LEADERS = [
   {

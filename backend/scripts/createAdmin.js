@@ -1,9 +1,9 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 
 async function createAdmin() {
-  const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/meru-darji-census';
+  const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27015/meru-website';
   await mongoose.connect(MONGO_URI);
   console.log('Connected to MongoDB');
 
