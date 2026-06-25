@@ -65,7 +65,7 @@ export default function News() {
 
       {/* Compact page header */}
       <section className="bg-gradient-to-br from-primary-950 via-primary-800 to-primary-700 text-white py-2 px-4 text-center flex-shrink-0">
-        <h1 className="text-sm font-bold tracking-wide">మేర కార్పోరేషన్ వార్తలు · News</h1>
+        <h1 className="text-sm font-bold tracking-wide">రాష్ట్ర మేర కార్పోరేషన్ వార్తలు · News</h1>
       </section>
 
       {/* Main — fills remaining height */}
@@ -138,10 +138,18 @@ export default function News() {
                     </>
                   )}
 
-                  {/* Counter */}
-                  <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm z-10">
+                  {/* Counter — top left */}
+                  <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white text-xs font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm z-10">
                     {current + 1} / {total}
                   </div>
+
+                  {/* Latest badge — top right, only within 24 hrs of createdAt */}
+                  {slide?.createdAt && Date.now() - new Date(slide.createdAt).getTime() < 86400000 && (
+                    <div className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white inline-block" />
+                      Latest
+                    </div>
+                  )}
                 </div>
 
                 {/* Caption */}

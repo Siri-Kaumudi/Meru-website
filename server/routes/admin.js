@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
 const Household = require('../models/Household');
 const Admin = require('../models/Admin');
 const NewsItem = require('../models/NewsItem');
@@ -173,50 +173,93 @@ router.get('/export', auth, async (req, res) => {
     const query = district ? { district } : {};
     const households = await Household.find(query).sort({ createdAt: -1 }).select('-ipAddress -__v');
 
-    const rows = [];
+    // Light pastel fills — cycle across families, never repeat adjacent
+    const FAMILY_COLORS = [
+      'FFFFC7CE', // light red
+      'FFC6EFCE', // light green
+      'FFFFEB9C', // light yellow
+      'FFDCE6F1', // light blue
+    ];
+
+    const headers = [
+      'రేషన్ కార్డు నెం.', 'క్లస్టర్ నెం.', 'గ్రామం/నగరం', 'మండలం', 'జిల్లా', 'రాష్ట్రం',
+      'క్రమ సంఖ్య', 'పేరు', 'ఆధార్ నంబర్', 'వయస్సు', 'లింగం',
+      'కుటుంబయజమానితో సంబంధం', 'వృత్తి/ఉద్యోగం/చదువు', 'సొంత ఇల్లు',
+      'సంక్షేమ పథకాలు', 'వివాహ స్థితి', 'ప్రభుత్వ పెన్షన్', 'రేషన్ కార్డు',
+      'ఉచిత కరెంటు 200 యూనిట్లు', 'మొబైల్ నంబర్', 'కుట్టు మీద ఆధారపడతారా', 'నమోదు తేదీ',
+    ];
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Meru Darji Census');
+
+    sheet.columns = headers.map(() => ({ width: 22 }));
+
+    // Header row — dark blue background, white bold text
+    const headerRow = sheet.addRow(headers);
+    headerRow.height = 30;
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F3864' } };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+
+    // Data rows — each household gets the next color; members of same household share it
+    let colorIdx = 0;
     households.forEach((hh) => {
+      const argb = FAMILY_COLORS[colorIdx % FAMILY_COLORS.length];
+      colorIdx++;
+
       hh.members.forEach((m) => {
-        rows.push({
-          'రేషన్ కార్డు నెం.': hh.rationCardNo || '',
-          'క్లస్టర్ నెం.': hh.clusterNo || '',
-          'గ్రామం/నగరం': hh.village,
-          'మండలం': hh.mandal,
-          'జిల్లా': hh.district,
-          'రాష్ట్రం': hh.state,
-          'క్రమ సంఖ్య': m.slNo,
-          'పేరు': m.name,
-          'ఆధార్ నంబర్': m.aadhaarNo || '',
-          'వయస్సు': m.age,
-          'లింగం': m.gender,
-          'కుటుంబయజమానితో సంబంధం': m.relationshipWithHead,
-          'వృత్తి/ఉద్యోగం/చదువు': m.occupationOrEducation || '',
-          'సొంత ఇల్లు': m.ownHouse || '',
-          'సంక్షేమ పథకాలు': m.welfareSchemes || '',
-          'వివాహ స్థితి': m.maritalStatus || '',
-          'ప్రభుత్వ పెన్షన్': m.governmentPension || '',
-          'రేషన్ కార్డు': m.rationCard || '',
-          'ఉచిత కరెంటు 200 యూనిట్లు': m.freeUnits200 || '',
-          'మొబైల్ నంబర్': m.mobileNo || '',
-          'కుట్టు మీద ఆధారపడతారా': m.tailoringDependent || '',
-          'నమోదు తేదీ': new Date(hh.createdAt).toLocaleString('en-IN'),
-        });
+        const row = sheet.addRow([
+          hh.rationCardNo || '',
+          hh.clusterNo || '',
+          hh.village,
+          hh.mandal,
+          hh.district,
+          hh.state,
+          m.slNo,
+          m.name,
+          m.aadhaarNo || '',
+          m.age,
+          m.gender,
+          m.relationshipWithHead,
+          m.occupationOrEducation || '',
+          m.ownHouse || '',
+          m.welfareSchemes || '',
+          m.maritalStatus || '',
+          m.governmentPension || '',
+          m.rationCard || '',
+          m.freeUnits200 || '',
+          m.mobileNo || '',
+          m.tailoringDependent || '',
+          new Date(hh.createdAt).toLocaleString('en-IN'),
+        ]);
+        row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: argb } };
+        row.alignment = { vertical: 'middle' };
       });
     });
 
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(rows);
-    ws['!cols'] = Object.keys(rows[0] || {}).map(() => ({ wch: 22 }));
-    XLSX.utils.book_append_sheet(wb, ws, 'Meru Darji Census');
+    // Freeze the header row so it stays visible while scrolling
+    sheet.views = [{ state: 'frozen', ySplit: 1 }];
 
-    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
     const filename = `meru_darji_census_${new Date().toISOString().split('T')[0]}.xlsx`;
-
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.send(buffer);
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Export failed' });
+  }
+});
+
+// DELETE /api/admin/households/:id
+router.delete('/households/:id', auth, async (req, res) => {
+  try {
+    const household = await Household.findByIdAndDelete(req.params.id);
+    if (!household) return res.status(404).json({ message: 'Household not found' });
+    res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to delete household' });
   }
 });
 

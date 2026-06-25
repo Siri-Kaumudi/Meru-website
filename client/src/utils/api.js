@@ -39,6 +39,7 @@ export const adminLogin = (credentials) => api.post('/admin/login', credentials)
 export const getStats = () => api.get('/admin/stats');
 export const getDailyStats = (days = 30) => api.get(`/admin/stats/daily?days=${days}`);
 export const getHouseholds = (params) => api.get('/admin/households', { params });
+export const deleteHousehold = (id) => api.delete(`/admin/households/${id}`);
 // Admin news endpoints
 export const getAdminNews = () => api.get('/admin/news');
 export const addNewsItem = (data) => api.post('/admin/news', data);

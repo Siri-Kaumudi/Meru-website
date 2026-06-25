@@ -5,11 +5,31 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell, Legend,
 } from 'recharts';
 import { LogOut, Download, Search, RefreshCw, Users, Home, Calendar, TrendingUp, ChevronLeft, ChevronRight, Newspaper, Trash2, Plus, Eye, EyeOff } from 'lucide-react';
-import { getStats, getDailyStats, getHouseholds, exportToExcel, getAdminNews, addNewsItem, deleteNewsItem, updateNewsItem } from '../../utils/api';
+import { getStats, getDailyStats, getHouseholds, deleteHousehold, exportToExcel, getAdminNews, addNewsItem, deleteNewsItem, updateNewsItem } from '../../utils/api';
 import SewingMachineIcon from '../../components/SewingMachineIcon';
 import { TELANGANA_DISTRICTS, DISTRICT_CONSTITUENCIES } from '../../utils/districts';
 
 const PIE_COLORS = ['#2563eb', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
+
+const RADIAN = Math.PI / 180;
+function GenderLabel({ cx, cy, midAngle, outerRadius, _id, percent }) {
+  const radius = outerRadius + 38;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      fontSize={12}
+      fontWeight="600"
+      fill="#1e3a5f"
+    >
+      {`${_id} ${(percent * 100).toFixed(1)}%`}
+    </text>
+  );
+}
 
 function StatCard({ icon: Icon, value, label, sublabel, color = 'primary' }) {
   const colors = {
@@ -80,6 +100,17 @@ export default function AdminDashboard() {
   function handleSearch(e) {
     e.preventDefault();
     fetchHouseholds(1);
+  }
+
+  async function handleDeleteHousehold(id, villageName) {
+    if (!window.confirm(`"${villageName}" కుటుంబ నమోదును తొలగించాలా?\nDelete this household registration?`)) return;
+    try {
+      await deleteHousehold(id);
+      fetchHouseholds(pagination.page);
+      fetchStats();
+    } catch {
+      alert('తొలగించడం విఫలమైంది / Delete failed');
+    }
   }
 
   if (loading) {
@@ -333,13 +364,23 @@ export default function AdminDashboard() {
             {stats?.genderStats?.length > 0 && (
               <div className="card">
                 <h3 className="font-bold text-gray-800 mb-4">లింగ వివరాలు / Gender Distribution</h3>
-                <ResponsiveContainer width="100%" height={240}>
-                  <PieChart>
-                    <Pie data={stats.genderStats} dataKey="count" nameKey="_id" cx="50%" cy="50%" outerRadius={90} label={({ _id, percent }) => `${_id} ${(percent * 100).toFixed(1)}%`}>
+                <ResponsiveContainer width="100%" height={320}>
+                  <PieChart margin={{ top: 30, right: 40, left: 40, bottom: 10 }}>
+                    <Pie
+                      data={stats.genderStats}
+                      dataKey="count"
+                      nameKey="_id"
+                      cx="50%"
+                      cy="48%"
+                      outerRadius={95}
+                      paddingAngle={4}
+                      label={GenderLabel}
+                      labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
+                    >
                       {stats.genderStats.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                     </Pie>
-                    <Tooltip />
-                    <Legend />
+                    <Tooltip formatter={(v) => [v.toLocaleString('en-IN'), 'సభ్యులు']} />
+                    <Legend wrapperStyle={{ paddingTop: '24px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -415,13 +456,14 @@ export default function AdminDashboard() {
                       <th className="p-3 text-left">రేషన్ నెం.</th>
                       <th className="p-3 text-center">సభ్యులు</th>
                       <th className="p-3 text-left">నమోదు తేదీ</th>
+                      <th className="p-3 text-center">తొలగించు</th>
                     </tr>
                   </thead>
                   <tbody>
                     {tableLoading ? (
-                      <tr><td colSpan={6} className="p-8 text-center text-gray-400 animate-pulse">లోడ్ అవుతోంది...</td></tr>
+                      <tr><td colSpan={7} className="p-8 text-center text-gray-400 animate-pulse">లోడ్ అవుతోంది...</td></tr>
                     ) : households.length === 0 ? (
-                      <tr><td colSpan={6} className="p-8 text-center text-gray-400">డేటా లేదు</td></tr>
+                      <tr><td colSpan={7} className="p-8 text-center text-gray-400">డేటా లేదు</td></tr>
                     ) : (
                       households.map((hh, i) => (
                         <tr key={hh._id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
@@ -442,6 +484,15 @@ export default function AdminDashboard() {
                           </td>
                           <td className="p-3 text-xs text-gray-500">
                             {new Date(hh.createdAt).toLocaleDateString('en-IN')}
+                          </td>
+                          <td className="p-3 text-center">
+                            <button
+                              onClick={() => handleDeleteHousehold(hh._id, hh.village)}
+                              className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </td>
                         </tr>
                       ))

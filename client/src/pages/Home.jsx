@@ -42,15 +42,15 @@ function LeaderCircle({ photo, name, role, roleEn, size = 'sm' }) {
 
 /* ── Leader data — add photo path when images are available ── */
 const LEFT_LEADERS = [
-  { photo: '/cm.jpeg',    name: 'శ్రీ రేవంత్ రెడ్డి', role: 'తెలంగాణ ముఖ్యమంత్రి',       roleEn: 'Chief Minister, Telangana',    size: 'lg' },
-  { photo: '/mahesh.jpg', name: 'శ్రీ మహేష్ కుమార్',  role: 'తెలంగాణ పిసిసి ప్రెసిడెంట్', roleEn: 'TS PCC President', size: 'lg' },
-  { photo: '/sanga.jpeg', name: 'శ్రీ సంగ వెంకటరాజం మేరు', role: 'మేర కార్పోరేషన్ చైర్మన్', roleEn: 'Mera Corporation Chairman', type: 'full' },
+  { photo: '/cm.jpeg',    name: 'శ్రీ ఎనుముల రేవంత్ రెడ్డి', role: 'తెలంగాణ ముఖ్యమంత్రి',       roleEn: 'Chief Minister, Telangana',    size: 'lg' },
+  { photo: '/mahesh.jpg', name: 'శ్రీ బొమ్మ మహేష్ కుమార్ గౌడ్',  role: 'తెలంగాణ పిసిసి ప్రెసిడెంట్', roleEn: 'TS PCC President', size: 'lg' },
+  { photo: '/sanga.jpeg', name: 'శ్రీ సంగ వెంకటరాజం మేరు', role: 'రాష్ట్ర మేర కార్పోరేషన్ చైర్మన్', roleEn: 'State Mera Corporation Chairman', type: 'full' },
 ];
 
 const RIGHT_LEADERS = [
-  { photo: '/batti.jpg', name: 'శ్రీ బట్టి విక్రమార్క', role: 'తెలంగాణ డిప్యూటీ సీఎం', roleEn: 'Deputy CM, Telangana', size: 'lg' },
-  { photo: '/prabhakar.jpg', name: 'శ్రీ ప్రభాకర్', role: 'తెలంగాణ బీసీ సంక్షేమమంత్రి', roleEn: 'TS BC Welfare Minister', size: 'lg' },
-  { photo: '/laxmi.png', name: 'శ్రీ మాడిశెట్టి లక్ష్మీనారాయణ మేరు', role: 'మేర కార్పోరేషన్ వైస్ చైర్మన్', roleEn: 'Mera Corporation Vice Chairman', type: 'full' },
+  { photo: '/batti.jpg', name: 'శ్రీ మల్లు భట్టి విక్రమార్క', role: 'తెలంగాణ డిప్యూటీ సీఎం', roleEn: 'Deputy CM, Telangana', size: 'lg' },
+  { photo: '/prabhakar.jpg', name: 'శ్రీ పొన్నం ప్రభాకర్ గౌడ్', role: 'తెలంగాణ బీసీ సంక్షేమమంత్రి', roleEn: 'TS BC Welfare Minister', size: 'lg' },
+  { photo: '/mera-vice-chairman.png', name: 'శ్రీ మాడిశెట్టి లక్ష్మీనారాయణ మేరు', role: 'రాష్ట్ర మేర కార్పోరేషన్ వైస్ చైర్మన్', roleEn: 'State Mera Corporation Vice Chairman', type: 'full' },
 ];
 
 export default function Home() {
@@ -84,48 +84,53 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-6 relative z-10 flex flex-col lg:flex-row items-center gap-8">
+        <div className="max-w-7xl mx-auto px-4 py-6 relative z-10 flex flex-col lg:flex-row items-start gap-8">
 
           {/* ── LEFT leaders column (desktop only) ── */}
-          <div className="hidden lg:flex flex-col items-center gap-6 flex-shrink-0 w-52 self-start pt-4">
-            {LEFT_LEADERS.map((l, i) =>
-              l.type === 'full' ? (
-                <div key={i} className="text-center w-full">
-                  <img
-                    src={l.photo}
-                    alt={l.name}
-                    className="object-contain object-top drop-shadow-xl mx-auto"
-                    style={{
-                      width: '260px',
-                      maxHeight: '480px',
-                      WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-                      maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-                    }}
-                  />
-                  <p className="text-white font-bold text-xs mt-3 leading-tight text-[16px]">{l.name}</p>
-                  {l.role && <p className="text-[#FF9933] text-[12px] font-semibold mt-1 leading-tight">{l.role}</p>}
-                  {l.roleEn && <p className="text-primary-300 text-[10px] mt-1 leading-tight">{l.roleEn}</p>}
-                </div>
-              ) : (
+          <div className="hidden lg:flex flex-col items-center flex-shrink-0 w-52 pt-4">
+            {/* Circle leaders */}
+            <div className="flex flex-col items-center gap-6">
+              {LEFT_LEADERS.filter(l => l.type !== 'full').map((l, i) => (
                 <LeaderCircle key={i} {...l} />
-              )
-            )}
+              ))}
+            </div>
+            {/* Full-body photo — directly below circle leaders */}
+            {LEFT_LEADERS.filter(l => l.type === 'full').map((l, i) => (
+              <div key={i} className="text-center w-full mt-4">
+                <img
+                  src={l.photo}
+                  alt={l.name}
+                  className="drop-shadow-xl mx-auto"
+                  style={{
+                    width: '200px',
+                    height: '290px',
+                    objectFit: 'cover',
+                    objectPosition: 'top center',
+                    WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                  }}
+                />
+                <p className="text-white font-bold text-xs mt-3 leading-tight text-[16px]">{l.name}</p>
+                {l.role && <p className="text-[#FF9933] text-[12px] font-semibold mt-1 leading-tight">{l.role}</p>}
+                {l.roleEn && <p className="text-primary-300 text-[10px] mt-1 leading-tight">{l.roleEn}</p>}
+              </div>
+            ))}
           </div>
 
           {/* ── CENTER: Main hero content ── */}
           <div className="flex-1 text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-full px-4 py-2 text-sm mb-6 mt-2 lg:-mt-10">
+            <div className="inline-flex items-center gap-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-full px-4 py-2 text-sm mb-6 mt-6">
               <SewingMachineIcon className="w-5 h-5" />
               <span className="text-primary-200">తెలంగాణ రాష్ట్రం · Telangana State</span>
             </div>
 
             {/* Title */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight">
-              మేర కార్పోరేషన్, తెలంగాణ
+              రాష్ట్ర మేర కార్పోరేషన్, తెలంగాణ
             </h1>
             <h2 className="text-base sm:text-lg font-medium text-primary-300 mb-2 tracking-wide pb-6">
-              Mera Corporation, Telangana
+              State Mera Corporation, Telangana
             </h2>
             {/* <p className="text-primary-300 text-lg mb-2">జనగణన నమోదు పోర్టల్</p>
             <p className="text-primary-400 text-sm mb-10">Community Census Registration Portal</p> */}
@@ -164,14 +169,14 @@ export default function Home() {
               {/* 2 full-body leaders side by side */}
               <div className="flex justify-center gap-4">
                 {[LEFT_LEADERS[2], RIGHT_LEADERS[2]].map((l, i) => (
-                  <div key={i} className="text-center" style={{ width: '140px' }}>
+                  <div key={i} className="text-center" style={{ width: '160px' }}>
                     <img
                       src={l.photo}
                       alt={l.name}
                       className="object-contain object-top drop-shadow-xl mx-auto"
                       style={{
-                        width: '115px',
-                        maxHeight: '195px',
+                        width: '145px',
+                        maxHeight: '240px',
                         WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
                         maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
                       }}
@@ -186,27 +191,42 @@ export default function Home() {
           </div>
 
           {/* ── RIGHT leaders column (desktop only) ── */}
-          <div className="hidden lg:flex flex-col items-center gap-6 flex-shrink-0 w-52 self-start pt-4">
-            {RIGHT_LEADERS.map((l, i) =>
-              l.type === 'full' ? (
-                <div key={i} className="text-center w-full">
+          <div className="hidden lg:flex flex-col items-center flex-shrink-0 w-52 pt-4">
+            {/* Circle leaders */}
+            <div className="flex flex-col items-center gap-6">
+              {RIGHT_LEADERS.filter(l => l.type !== 'full').map((l, i) => (
+                <LeaderCircle key={i} {...l} />
+              ))}
+            </div>
+            {/* Full-body photo — directly below circle leaders */}
+            {RIGHT_LEADERS.filter(l => l.type === 'full').map((l, i) => (
+              <div key={i} className="text-center w-full mt-0">
+                <div
+                  className="mx-auto overflow-hidden"
+                  style={{
+                    width: '260px',
+                    height: '310px',
+                    WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                  }}
+                >
                   <img
                     src={l.photo}
                     alt={l.name}
-                    className="w-full object-contain object-top max-h-60 drop-shadow-xl"
+                    className="drop-shadow-xl"
                     style={{
-                      WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
-                      maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+                      width: '260px',
+                      height: 'auto',
+                      display: 'block',
+                      marginTop: '-70px',
                     }}
                   />
-                <p className="text-white font-bold text-xs mt-3 leading-tight text-[16px]">{l.name}</p>
-                  {l.role && <p className="text-[#FF9933] text-[12px] font-semibold mt-1 leading-tight">{l.role}</p>}
-                  {l.roleEn && <p className="text-primary-300 text-[10px] mt-1 leading-tight">{l.roleEn}</p>}
                 </div>
-              ) : (
-                <LeaderCircle key={i} {...l} />
-              )
-            )}
+                <p className="text-white font-bold text-xs mt-3 leading-tight text-[16px]">{l.name}</p>
+                {l.role && <p className="text-[#FF9933] text-[12px] font-semibold mt-1 leading-tight">{l.role}</p>}
+                {l.roleEn && <p className="text-primary-300 text-[10px] mt-1 leading-tight">{l.roleEn}</p>}
+              </div>
+            ))}
           </div>
 
         </div>
