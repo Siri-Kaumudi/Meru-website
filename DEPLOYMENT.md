@@ -1,4 +1,4 @@
-# Production Deployment Guide — merucorporation.in
+# Production Deployment Guide — meracorporation.in
 
 This guide deploys the Meru Darji Census website on your VPS.
 
@@ -23,7 +23,7 @@ MongoDB is isolated on port **27015** and does not interfere with other MongoDB 
 - [ ] **Node.js 22.22.1** on the VPS (needed to build the frontend only)
 - [ ] **Docker** and **Docker Compose**
 - [ ] Root or sudo SSH access
-- [ ] Domain **merucorporation.in** purchased
+- [ ] Domain **meracorporation.in** purchased
 - [ ] Your VPS public IP address
 
 Verify Node version (for frontend build):
@@ -47,7 +47,7 @@ At your domain registrar, add:
 Check propagation:
 
 ```bash
-ping merucorporation.in
+ping meracorporation.in
 ```
 
 ---
@@ -143,7 +143,7 @@ Set these values:
 ```env
 MONGO_URI=mongodb://localhost:27015/meru-website
 PORT=5500
-CLIENT_URL=https://merucorporation.in
+CLIENT_URL=https://meracorporation.in
 JWT_SECRET=PASTE_A_LONG_RANDOM_STRING_HERE
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=PASTE_A_STRONG_PASSWORD_HERE
@@ -245,16 +245,17 @@ Install Nginx:
 sudo apt install -y nginx
 ```
 
-Copy the sample config from the repo:
+**First time (before SSL):** use the HTTP-only config:
 
 ```bash
-sudo cp /opt/meru-website/nginx/nginx.conf /etc/nginx/sites-available/merucorporation.in
+sudo mkdir -p /var/www/certbot
+sudo cp /opt/meru-website/nginx/nginx.http.conf /etc/nginx/sites-available/meracorporation.in
 ```
 
 Enable the site:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/merucorporation.in /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/meracorporation.in /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
@@ -267,10 +268,10 @@ The config serves:
 Test in browser:
 
 ```
-http://merucorporation.in
+http://meracorporation.in
 ```
 
-Admin panel: `http://merucorporation.in/admin`
+Admin panel: `http://meracorporation.in/admin`
 
 ---
 
@@ -280,16 +281,51 @@ Admin panel: `http://merucorporation.in/admin`
 sudo apt install -y certbot python3-certbot-nginx
 ```
 
+Obtain certificates:
+
 ```bash
-sudo certbot --nginx -d merucorporation.in -d www.merucorporation.in
+sudo certbot certonly --webroot -w /var/www/certbot \
+  -d meracorporation.in \
+  -d www.meracorporation.in \
+  --email YOUR_EMAIL@example.com \
+  --agree-tos \
+  --no-eff-email
 ```
 
-Follow the prompts. Certbot will update your Nginx config for HTTPS.
+Generate SSL options (if not already present):
+
+```bash
+sudo curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -o /etc/letsencrypt/options-ssl-nginx.conf
+sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+```
+
+Switch to the full HTTPS config:
+
+```bash
+sudo cp /opt/meru-website/nginx/nginx.conf /etc/nginx/sites-available/meracorporation.in
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Certificate files used by Nginx:
+
+| File | Path |
+|------|------|
+| Certificate | `/etc/letsencrypt/live/meracorporation.in/fullchain.pem` |
+| Private key | `/etc/letsencrypt/live/meracorporation.in/privkey.pem` |
+| SSL options | `/etc/letsencrypt/options-ssl-nginx.conf` |
+| DH params | `/etc/letsencrypt/ssl-dhparams.pem` |
+
+Set up auto-renewal:
+
+```bash
+sudo certbot renew --dry-run
+```
 
 After SSL is active, update `backend/.env`:
 
 ```env
-CLIENT_URL=https://merucorporation.in
+CLIENT_URL=https://meracorporation.in
 ```
 
 Restart the backend container:
@@ -302,8 +338,8 @@ docker compose restart backend
 Test:
 
 ```
-https://merucorporation.in
-https://merucorporation.in/api/health
+https://meracorporation.in
+https://meracorporation.in/api/health
 ```
 
 ---
@@ -312,7 +348,7 @@ https://merucorporation.in/api/health
 
 | Feature | Test |
 |---------|------|
-| Home page | `https://merucorporation.in` |
+| Home page | `https://meracorporation.in` |
 | Registration | `/register` |
 | Census counters | Home page |
 | News | `/news` |
@@ -422,7 +458,7 @@ Check `backend/.env` and that containers are running (`docker compose ps`).
 Ensure `CLIENT_URL` in `backend/.env` matches your domain exactly:
 
 ```env
-CLIENT_URL=https://merucorporation.in
+CLIENT_URL=https://meracorporation.in
 ```
 
 Then:
@@ -474,7 +510,8 @@ Usually caused by missing `JWT_SECRET` in `backend/.env` or MongoDB not ready ye
 | `/opt/meru-website/backend/Dockerfile` | Backend image (Node 22) |
 | `/opt/meru-website/backend/.env` | Production secrets |
 | `/opt/meru-website/frontend/build/` | Built React app (Nginx serves this) |
-| `/opt/meru-website/nginx/nginx.conf` | Sample Nginx config for host |
+| `/opt/meru-website/nginx/nginx.conf` | Full HTTPS Nginx config (after Certbot) |
+| `/opt/meru-website/nginx/nginx.http.conf` | HTTP-only bootstrap config (before SSL) |
 
 ---
 
