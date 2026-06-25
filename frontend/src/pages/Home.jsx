@@ -44,7 +44,7 @@ function LeaderCircle({ photo, name, role, roleEn, size = 'sm' }) {
 const LEFT_LEADERS = [
   { photo: '/cm.jpeg',    name: 'శ్రీ ఎనుముల రేవంత్ రెడ్డి', role: 'తెలంగాణ ముఖ్యమంత్రి',       roleEn: 'Chief Minister, Telangana',    size: 'lg' },
   { photo: '/mahesh.jpg', name: 'శ్రీ బొమ్మ మహేష్ కుమార్ గౌడ్',  role: 'తెలంగాణ పిసిసి ప్రెసిడెంట్', roleEn: 'TS PCC President', size: 'lg' },
-  { photo: '/sanga.jpeg', name: 'శ్రీ సంగ వెంకటరాజం మేరు', role: 'రాష్ట్ర మేర కార్పోరేషన్ చైర్మన్', roleEn: 'State Mera Corporation Chairman', type: 'full' },
+  { photo: '/sanga.jpeg', name: 'శ్రీ సంగ వెంకటరాజం మేరు', role: 'రాష్ట్ర మేర కార్పోరేషన్ చైర్మన్', roleEn: 'State Mera Corporation Chairman', type: 'full', mobileFit: 'contain' },
 ];
 
 const RIGHT_LEADERS = [
@@ -180,7 +180,7 @@ export default function Home() {
                       <img
                         src={l.photo}
                         alt={l.name}
-                        className="w-full h-full object-cover object-top"
+                        className={`w-full h-full object-top ${l.mobileFit === 'contain' ? 'object-contain' : 'object-cover'}`}
                       />
                     </div>
                     <p className="text-white font-bold text-[11px] mt-1 leading-tight">{l.name}</p>
