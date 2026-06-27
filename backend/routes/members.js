@@ -5,7 +5,7 @@ const Household = require('../models/Household');
 
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
+  max: 50,
   message: { message: 'ఈ IP నుండి చాలా నమోదు అభ్యర్థనలు. 1 గంట తర్వాత మళ్ళీ ప్రయత్నించండి.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -13,7 +13,7 @@ const registerLimiter = rateLimit({
 
 const checkLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 60,
+  max: 200,
   message: { message: 'చాలా అభ్యర్థనలు. కొద్ది సేపు వేచి ఉండండి.' },
   standardHeaders: true,
   legacyHeaders: false,
