@@ -33,8 +33,8 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0" onClick={() => setOpen(false)}>
           <SewingMachineIcon className="w-9 h-9 sm:w-12 sm:h-12" />
           <div>
-            <div className="font-bold text-sm sm:text-base leading-tight">రాష్ట్ర మేర కార్పోరేషన్, తెలంగాణ</div>
-            <div className="text-[10px] sm:text-xs text-primary-300 leading-tight">State Mera Corporation, Telangana</div>
+            <div className="font-bold text-sm sm:text-base leading-tight">రాష్ట్ర మేరు కార్పోరేషన్, తెలంగాణ</div>
+            <div className="text-[10px] sm:text-xs text-primary-300 leading-tight">State Meru Corporation, Telangana</div>
           </div>
         </Link>
 

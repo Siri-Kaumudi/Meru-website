@@ -44,13 +44,13 @@ function LeaderCircle({ photo, name, role, roleEn, size = 'sm' }) {
 const LEFT_LEADERS = [
   { photo: '/cm.jpeg',    name: 'శ్రీ ఎనుముల రేవంత్ రెడ్డి', role: 'తెలంగాణ ముఖ్యమంత్రి',       roleEn: 'Chief Minister, Telangana',    size: 'lg' },
   { photo: '/mahesh.jpg', name: 'శ్రీ బొమ్మ మహేష్ కుమార్ గౌడ్',  role: 'తెలంగాణ పిసిసి ప్రెసిడెంట్', roleEn: 'TS PCC President', size: 'lg' },
-  { photo: '/sanga.jpeg', name: 'శ్రీ సంగ వెంకటరాజం మేరు', role: 'రాష్ట్ర మేర కార్పోరేషన్ చైర్మన్', roleEn: 'State Mera Corporation Chairman', type: 'full', mobileFit: 'contain' },
+  { photo: '/sanga.jpeg', name: 'శ్రీ సంగ వెంకటరాజం మేరు', role: 'రాష్ట్ర మేరు కార్పోరేషన్ చైర్మన్', roleEn: 'State Meru Corporation Chairman', type: 'full', mobileFit: 'contain' },
 ];
 
 const RIGHT_LEADERS = [
   { photo: '/batti.jpg', name: 'శ్రీ మల్లు భట్టి విక్రమార్క', role: 'తెలంగాణ డిప్యూటీ సీఎం', roleEn: 'Deputy CM, Telangana', size: 'lg' },
   { photo: '/prabhakar.jpg', name: 'శ్రీ పొన్నం ప్రభాకర్ గౌడ్', role: 'తెలంగాణ బీసీ సంక్షేమమంత్రి', roleEn: 'TS BC Welfare Minister', size: 'lg' },
-  { photo: '/mera-vice-chairman.png', name: 'శ్రీ మాడిశెట్టి లక్ష్మీనారాయణ మేరు', role: 'రాష్ట్ర మేర కార్పోరేషన్ వైస్ చైర్మన్', roleEn: 'State Mera Corporation Vice Chairman', type: 'full' },
+  { photo: '/mera-vice-chairman.png', name: 'శ్రీ మాడిశెట్టి లక్ష్మీనారాయణ మేరు', role: 'రాష్ట్ర మేరు కార్పోరేషన్ వైస్ చైర్మన్', roleEn: 'State Meru Corporation Vice Chairman', type: 'full' },
 ];
 
 export default function Home() {
@@ -127,10 +127,10 @@ export default function Home() {
 
             {/* Title */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight">
-              రాష్ట్ర మేర కార్పోరేషన్, తెలంగాణ
+              రాష్ట్ర మేరు కార్పోరేషన్, తెలంగాణ
             </h1>
             <h2 className="text-base sm:text-lg font-medium text-primary-300 mb-2 tracking-wide pb-6">
-              State Mera Corporation, Telangana
+              State Meru Corporation, Telangana
             </h2>
             {/* <p className="text-primary-300 text-lg mb-2">జనగణన నమోదు పోర్టల్</p>
             <p className="text-primary-400 text-sm mb-10">Community Census Registration Portal</p> */}

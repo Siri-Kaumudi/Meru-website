@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { CheckCircle, Home, Users, Share2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -6,6 +7,10 @@ import SewingMachineIcon from '../components/SewingMachineIcon';
 
 export default function Success() {
   const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const { memberCount = 1, householdId } = location.state || {};
 
   function handleShare() {
@@ -39,7 +44,7 @@ export default function Success() {
             నమోదు విజయవంతమైంది! 🎉
           </h1>
           <p className="text-xl font-semibold text-green-600 mb-4">
-            Registration Successful!
+            Registration Successfull!
           </p>
 
           {/* Stats */}
