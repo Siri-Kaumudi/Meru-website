@@ -142,13 +142,14 @@ export default function FormStep1({ data, onChange, errors }) {
           {errors.rationCardNo && <p className="text-red-500 text-xs mt-1">{errors.rationCardNo}</p>}
         </div>
 
-        {/* Cluster No */}
+        {/* Native Place */}
         <div>
           <label className="label-field">
-            క్లస్టర్ నంబర్ <span className="text-gray-400 font-normal">(ఐచ్ఛికం)</span>
-            <span className="block text-xs font-normal text-gray-400">Cluster Number (Optional)</span>
+            స్వగ్రామం <span className="text-gray-400 font-normal">(ఐచ్ఛికం)</span>
+            <span className="block text-xs font-normal text-gray-400">Native Place — if migrant family</span>
           </label>
-          <input type="text" placeholder="క్లస్టర్ నంబర్" maxLength={20} {...field('clusterNo')} />
+          <input type="text" placeholder="స్వగ్రామం పేరు" maxLength={100} {...field('nativePlace')} />
+          {errors.nativePlace && <p className="text-red-500 text-xs mt-1">{errors.nativePlace}</p>}
         </div>
       </div>
     </div>

@@ -89,9 +89,14 @@ const householdSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    clusterNo: {
+    isMigrant: {
+      type: Boolean,
+      default: false,
+    },
+    nativePlace: {
       type: String,
       trim: true,
+      maxlength: [100, 'స్వగ్రామం 100 అక్షరాలు మించకూడదు'],
     },
 
     // Address

@@ -22,7 +22,7 @@ const checkLimiter = rateLimit({
 // POST /api/members/register — register a whole household
 router.post('/register', registerLimiter, async (req, res) => {
   try {
-    const { rationCardNo, clusterNo, houseNo, street, village, mandal, divisionWardNo, constituency, district, state, members } = req.body;
+    const { rationCardNo, nativePlace, houseNo, street, village, mandal, divisionWardNo, constituency, district, state, members } = req.body;
 
     // Validate members array
     if (!members || !Array.isArray(members) || members.length === 0) {
@@ -100,7 +100,8 @@ router.post('/register', registerLimiter, async (req, res) => {
 
     const household = new Household({
       rationCardNo: rationCardNo || undefined,
-      clusterNo: clusterNo || undefined,
+      nativePlace: nativePlace && nativePlace.trim() ? nativePlace.trim() : undefined,
+      isMigrant: !!(nativePlace && nativePlace.trim()),
       houseNo,
       street,
       village,

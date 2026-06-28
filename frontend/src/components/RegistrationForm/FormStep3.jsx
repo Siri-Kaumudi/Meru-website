@@ -63,7 +63,8 @@ export default function FormStep3({ household, members }) {
           <Row label="జిల్లా"              labelEn="District"       value={household.district} />
           <Row label="రాష్ట్రం"      labelEn="State"        value={household.state || 'తెలంగాణ'} />
           {household.rationCardNo && <Row label="రేషన్ కార్డు నెం." labelEn="Ration Card No" value={household.rationCardNo} />}
-          {household.clusterNo    && <Row label="క్లస్టర్ నంబర్"   labelEn="Cluster No"     value={household.clusterNo} />}
+          {household.nativePlace && <Row label="వలస కుటుంబం"      labelEn="Migrant Family" value="అవును · Yes" />}
+          {household.nativePlace && <Row label="స్వగ్రామం"         labelEn="Native Place"   value={household.nativePlace} />}
         </dl>
       </Section>
 

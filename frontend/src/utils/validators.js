@@ -31,6 +31,13 @@ export function validateHousehold(data) {
       errors.rationCardNo = 'రేషన్ కార్డు నంబర్ సరైన ఆకృతిలో నమోదు చేయండి';
   }
 
+  if (data.nativePlace && data.nativePlace.trim().length > 0) {
+    if (data.nativePlace.trim().length < 2)
+      errors.nativePlace = 'స్వగ్రామం కనీసం 2 అక్షరాలు ఉండాలి';
+    else if (data.nativePlace.trim().length > 100)
+      errors.nativePlace = 'స్వగ్రామం 100 అక్షరాలు మించకూడదు';
+  }
+
   return errors;
 }
 

@@ -44,7 +44,7 @@ function getInitialStep(draft) {
 }
 
 const INITIAL_HOUSEHOLD = {
-  rationCardNo: '', clusterNo: '', houseNo: '', street: '', village: '', mandal: '',
+  rationCardNo: '', nativePlace: '', houseNo: '', street: '', village: '', mandal: '',
   divisionWardNo: '', constituency: '', district: '', state: 'తెలంగాణ',
 };
 
