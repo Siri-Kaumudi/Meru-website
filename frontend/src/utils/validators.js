@@ -45,6 +45,9 @@ export function validateMember(member, index) {
   const errors = {};
   const prefix = `member_${index}`;
 
+  if (index === 0 && (!member.surname || member.surname.trim().length === 0))
+    errors[`${prefix}_surname`] = 'కుటుంబయజమాని ఇంటి పేరు తప్పనిసరి';
+
   if (!member.name || member.name.trim().length < 2)
     errors[`${prefix}_name`] = 'పేరు తప్పనిసరి (కనీసం 2 అక్షరాలు)';
   else if (member.name.trim().length > 100)

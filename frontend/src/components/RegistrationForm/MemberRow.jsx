@@ -168,10 +168,11 @@ export default function MemberRow({ member, index, onChange, onRemove, onAadhaar
             {/* Surname */}
             <div>
               <label className="label-field text-xs">
-                ఇంటి పేరు <span className="text-gray-400 font-normal">(ఐచ్ఛికం)</span>
-                <span className="block font-normal text-gray-400">Surname (Optional)</span>
+                ఇంటి పేరు {isHead ? <span className="text-red-500">*</span> : <span className="text-gray-400 font-normal">(ఐచ్ఛికం)</span>}
+                <span className="block font-normal text-gray-400">{isHead ? 'Surname' : 'Surname (Optional)'}</span>
               </label>
               <input type="text" placeholder="ఇంటి పేరు నమోదు చేయండి" maxLength={100} {...field('surname')} />
+              {errors[`member_${index}_surname`] && <p className="text-red-500 text-xs mt-1">{errors[`member_${index}_surname`]}</p>}
             </div>
 
             {/* Full Name */}
