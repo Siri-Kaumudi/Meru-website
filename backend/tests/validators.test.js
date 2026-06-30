@@ -88,7 +88,7 @@ test('invalid gender Other', () => expect(validGender('Other')).toBeFalsy());
 test('invalid gender empty', () => expect(validGender('')).toBeFalsy());
 
 // Member count validation
-const validMemberCount = (arr) => Array.isArray(arr) && arr.length >= 1 && arr.length <= 8;
+const validMemberCount = (arr) => Array.isArray(arr) && arr.length >= 1 && arr.length <= 10;
 
 console.log('\n👨‍👩‍👧‍👦 Member Count Validation Tests');
 test('valid 1 member', () => expect(validMemberCount([{}])).toBeTruthy());

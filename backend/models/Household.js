@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const memberSchema = new mongoose.Schema(
   {
-    slNo: { type: Number, required: true, min: 1, max: 8 },
+    slNo: { type: Number, required: true, min: 1, max: 10 },
     name: {
       type: String,
       required: [true, 'సభ్యుని పేరు తప్పనిసరి'],
@@ -150,8 +150,8 @@ const householdSchema = new mongoose.Schema(
     members: {
       type: [memberSchema],
       validate: {
-        validator: (arr) => arr.length >= 1 && arr.length <= 8,
-        message: 'కనీసం 1 సభ్యుడు మరియు గరిష్టంగా 8 సభ్యులు నమోదు చేయవచ్చు',
+        validator: (arr) => arr.length >= 1 && arr.length <= 10,
+        message: 'కనీసం 1 సభ్యుడు మరియు గరిష్టంగా 10 సభ్యులు నమోదు చేయవచ్చు',
       },
     },
 

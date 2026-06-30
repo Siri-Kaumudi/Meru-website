@@ -28,8 +28,8 @@ router.post('/register', registerLimiter, async (req, res) => {
     if (!members || !Array.isArray(members) || members.length === 0) {
       return res.status(400).json({ message: 'కనీసం ఒక సభ్యుని వివరాలు నమోదు చేయండి' });
     }
-    if (members.length > 8) {
-      return res.status(400).json({ message: 'గరిష్టంగా 8 సభ్యులు నమోదు చేయవచ్చు' });
+    if (members.length > 10) {
+      return res.status(400).json({ message: 'గరిష్టంగా 10 సభ్యులు నమోదు చేయవచ్చు' });
     }
 
     // Check if ration card already registered (if provided)
